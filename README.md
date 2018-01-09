@@ -1,2 +1,2 @@
 # reimagined-barnacle
-# reimagined-barnacle\nTool for C projects fast includes preprocessing
+Tool for C projects fast includes preprocessing
