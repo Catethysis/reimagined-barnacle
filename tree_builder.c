@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <dirent.h>
-#include "lz4.h"
-#include "lz4.c"
+#include "lz4/lib/lz4.h"
+#include "lz4/lib/lz4.c"
 
 struct timeval start, tick, stop;
 double secs = 0;
