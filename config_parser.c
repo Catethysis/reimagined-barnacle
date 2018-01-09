@@ -4,11 +4,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "cJSON/cJSON.h"
-#include "cJSON/cJSON.c"
 
 struct {
 	char name[100];
-	struct source {
+	struct {
 		char path[200];
 		char name[100];
 		char flags[100];
@@ -34,16 +33,17 @@ void recursive_parser(uint8_t depth, cJSON *json_sources, char *flags_string) {
 
 	const cJSON *files = cJSON_GetObjectItemCaseSensitive(json_sources, "files");
 	if(cJSON_IsArray(files)) {
-		const cJSON *file;
+		cJSON *file;
 		cJSON_ArrayForEach(file, files) {
 			if(cJSON_IsString(file)) {
 				strcpy(project.sources[project.n_sources].flags, flags_string);
 				strcpy(project.sources[project.n_sources].path, path_string);
 				strcat(project.sources[project.n_sources].path, file->valuestring);
-				strcat(project.sources[project.n_sources].name, file->valuestring);
+				strcpy(project.sources[project.n_sources].name, file->valuestring);
 				project.n_sources++;
-				// printf("%d %s\n", depth, file->valuestring);
-			} else if(cJSON_IsObject(file)) {
+			}
+			else
+			if(cJSON_IsObject(file)) {
 				char new_flags_string[200];
 				strcpy(new_flags_string, flags_string);
 				recursive_parser(depth + 1, file, new_flags_string);
@@ -64,7 +64,8 @@ void parse_config(char *json) {
 		strcpy(project.name, name->valuestring);
 
 	char flags_string[100] = "";
-	const cJSON *sources = cJSON_GetObjectItemCaseSensitive(config, "sources"), *source;
+	const cJSON *sources = cJSON_GetObjectItemCaseSensitive(config, "sources");
+	cJSON *source;
 	cJSON_ArrayForEach(source, sources) {
 		if(cJSON_IsObject(source))
 			recursive_parser(0, source, flags_string);
@@ -73,10 +74,6 @@ void parse_config(char *json) {
 	const cJSON *paths = cJSON_GetObjectItemCaseSensitive(config, "paths"), *path;
 	cJSON_ArrayForEach(path, paths)
 		strcpy(project.paths[project.n_paths++], path->valuestring);
-
-	// if (cJSON_IsString(name) && (name->valuestring != NULL)) {
-	// 	printf("Sources \"%s\"\n", name->valuestring);
-	// }
 
 	cJSON_Delete(config);
 }
@@ -105,7 +102,6 @@ int main() {
 	printf("\nPaths:\n");
 	for(uint16_t i = 0; i < project.n_paths; i++)
 		printf("%s\n", project.paths[i]);
-	
 
 	return 0;
 }
