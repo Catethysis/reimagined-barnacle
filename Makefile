@@ -2,6 +2,7 @@ TARGET = config_parser
 BUILD_DIR = build
 
 SOURCES = \
+	main.c \
 	config_parser.c \
 	cJSON/cJSON.c \
 	timer/timer.c
