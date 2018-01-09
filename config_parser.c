@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "cJSON/cJSON.h"
+#include "timer.h"
 
 struct {
 	char name[100];
@@ -58,6 +59,7 @@ void parse_config(char *json) {
 		printf("Error while JSON parsing.'n");
 		return;
 	}
+	timer_tick("Parse");
 
 	const cJSON *name = cJSON_GetObjectItemCaseSensitive(config, "project");
 	if (cJSON_IsString(name) && (name->valuestring != NULL))
@@ -90,10 +92,14 @@ size_t read_config(char *path, char **config) {
 }
 
 int main() {
+	timer_start();
+	
 	char *config;
 	size_t config_len = read_config("build.json", &config);
+	timer_tick("Read");
 	project.n_sources = 0;
 	parse_config(config);
+	timer_tick("File list");
 
 	printf("Project \"%s\"\n", project.name);
 	printf("\nSources:\n");
@@ -102,6 +108,7 @@ int main() {
 	printf("\nPaths:\n");
 	for(uint16_t i = 0; i < project.n_paths; i++)
 		printf("%s\n", project.paths[i]);
+	timer_end("Total");
 
 	return 0;
 }

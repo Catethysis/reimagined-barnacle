@@ -1,12 +1,17 @@
 TARGET = config_parser
 BUILD_DIR = build
 
-SOURCES = config_parser.c cJSON/cJSON.c
+SOURCES = \
+	config_parser.c \
+	cJSON/cJSON.c \
+	timer/timer.c
+
+INCLUDES = -Itimer
 
 all: $(BUILD_DIR)/$(TARGET)
 
 $(BUILD_DIR)/$(TARGET): $(SOURCES) Makefile | $(BUILD_DIR) 
-	gcc $(SOURCES) -o $@
+	gcc $(SOURCES) $(INCLUDES) -O2 -o $@
 
 $(BUILD_DIR):
 	mkdir $@
